@@ -64,3 +64,26 @@ exports.updateListName = async (req, res, next) => {
     next(error);
   }
 };
+
+exports.deleteList = async (req, res, next) => {
+  const userId = req.userId;
+  const { id } = req.params;
+
+  if (!userId) {
+    return res.status(401).json({ error: "Unauthorized!" });
+  }
+
+  try {
+    const result = await pool.query(
+      "DELETE FROM todo_list WHERE id = $1 AND user_id = $2 RETURNING *",
+      [id, userId],
+    );
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: "List not found." });
+    }
+
+    res.status(200).json({ message: "List deleted.", list: result.rows[0] });
+  } catch (error) {
+    next(error);
+  }
+};
