@@ -15,6 +15,7 @@ app.use("/api/auth", authRouter);
 app.use((err, req, res, next) => {
   console.error(err);
   res.status(500).json({ error: "Something went wrong" });
+  next();
 });
 
 const PORT = process.env.PORT;
