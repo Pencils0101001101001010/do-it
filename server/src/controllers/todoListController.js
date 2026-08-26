@@ -7,8 +7,18 @@ exports.getLists = async (req, res, next) => {
   }
 
   try {
+    // Owned lists + lists shared with this user query
     const result = await pool.query(
-      "SELECT * FROM todo_list WHERE user_id = $1",
+      `SELECT tl.*, 'owner' AS role
+       FROM todo_list tl
+       WHERE tl.user_id = $1
+
+       UNION
+
+       SELECT tl.*, s.role
+       FROM todo_list tl
+       JOIN todo_list_shares s ON s.list_id = tl.id
+       WHERE s.user_id = $1 AND s.status = 'accepted'`,
       [userId],
     );
 
@@ -51,10 +61,25 @@ exports.updateListName = async (req, res, next) => {
   }
 
   try {
+    // Owner can rename, OR a shared user with 'editor' role
     const result = await pool.query(
-      "UPDATE todo_list SET name = $1 WHERE id = $2 AND user_id = $3 RETURNING *",
+      `UPDATE todo_list tl
+       SET name = $1
+       WHERE tl.id = $2
+         AND (
+           tl.user_id = $3
+           OR EXISTS (
+             SELECT 1 FROM todo_list_shares s
+             WHERE s.list_id = tl.id
+               AND s.user_id = $3
+               AND s.status = 'accepted'
+               AND s.role = 'editor'
+           )
+         )
+       RETURNING *`,
       [name.trim(), id, userId],
     );
+
     if (result.rows.length === 0) {
       return res.status(404).json({ error: "List not found." });
     }
@@ -74,16 +99,35 @@ exports.deleteList = async (req, res, next) => {
   }
 
   try {
+    // Owner-only delete — sharing (even 'editor') does not grant delete rights
     const result = await pool.query(
       "DELETE FROM todo_list WHERE id = $1 AND user_id = $2 RETURNING *",
       [id, userId],
     );
+
     if (result.rows.length === 0) {
       return res.status(404).json({ error: "List not found." });
     }
 
-    res.status(200).json({ message: "List deleted.", list: result.rows[0] });
+    res.status(200).json({ message: "List deleted." });
   } catch (error) {
     next(error);
   }
+};
+
+exports.getAccessLevel = async (ListId, userId) => {
+  const ownerCheck = await pool.query(
+    "SELECT id FROM todo_list WHERE id = $1 AND user_id = $2",
+    [ListId, userId],
+  );
+
+  if (ownerCheck.rows.length > 0) return "owner";
+
+  const collabCheck = await pool.query(
+    "SELECT role FROM todo_list_shares WHERE list_id = $1 AND user_id = $2",
+    [ListId, userId],
+  );
+  if (collabCheck.rows.length > 0) return collabCheck.rows[0].role;
+
+  return null;
 };

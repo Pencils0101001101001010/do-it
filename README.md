@@ -40,3 +40,6 @@ CREATE INDEX idx_todo_items_list_id ON todo_items(list_id);
 CREATE INDEX idx_shares_list_id ON todo_list_shares(list_id);
 CREATE INDEX idx_shares_user_id ON todo_list_shares(user_id);
 CREATE INDEX idx_shares_email ON todo_list_shares(invited_email);
+
+ALTER TABLE todo_list_shares
+ADD CONSTRAINT valid_role CHECK (role IN ('owner', 'editor', 'viewer'));
