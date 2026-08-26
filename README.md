@@ -20,6 +20,7 @@ id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
 list_id uuid NOT NULL REFERENCES todo_list(id) ON DELETE CASCADE,
 description VARCHAR(255) NOT NULL,
 is_done BOOLEAN NOT NULL DEFAULT FALSE,
+title VARCHAR(200)
 created_at TIMESTAMP DEFAULT NOW()
 );
 
