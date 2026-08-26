@@ -18,7 +18,7 @@ router.post("/:id/share", share.shareList);
 router.delete("/:id/collaborators/:shareId", share.removeShare); //:id = todo_list id, :shareId = share_list id
 
 //items
-router.get("/items", items.getItems); //:id list id
+router.get("/:id/items", items.getItems); //:id list id
 router.post("/:id/new", items.createItems); //:id list id
 
 module.exports = router;

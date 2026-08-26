@@ -1,7 +1,28 @@
 const pool = require("../db.js");
 const { getAccessLevel } = require("./todoListController.js");
 
-exports.getItems = async (req, res, next) => {};
+exports.getItems = async (req, res, next) => {
+  const { id } = req.params; //list id
+  const userId = req.userId;
+
+  if (!userId) {
+    return res.status(401).json({ error: "Unauthorized!" });
+  }
+
+  const access = await getAccessLevel(id, userId);
+  if (!access) return res.status(404).json({ error: "List not found" });
+
+  try {
+    const result = await pool.query(
+      "SELECT * FROM todo_items WHERE list_id = $1 ORDER BY created_at",
+      [id],
+    );
+
+    res.json(result.rows);
+  } catch (error) {
+    next(error);
+  }
+};
 
 exports.createItems = async (req, res, next) => {
   const { id } = req.params; //List id
@@ -12,8 +33,8 @@ exports.createItems = async (req, res, next) => {
   if (access === "viewer") {
     return res.status(403).json({ error: "Read-only access." });
   }
-  //   const { description, is_done, title } = req.body;
-  console.log(description, is_done, title);
+  const { description, is_done, title } = req.body;
+  //   console.log(description, is_done, title);
   try {
     const result = await pool.query(
       "INSERT INTO todo_items (list_id, description, is_done, title) VALUES ($1, $2, $3, $4) RETURNING *",
