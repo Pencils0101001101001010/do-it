@@ -5,6 +5,6 @@ const items = require("../controllers/todoItemsControllers.js");
 router.use(requireAuth);
 
 router.patch("/:id/item/:itemId", items.updateItem);
-router.delete("/remove-item/:id", items.deleteItem);
+router.delete("/:id/item/:itemId", items.deleteItem);
 
 module.exports = router;

@@ -57,7 +57,11 @@ exports.updateItem = async (req, res, next) => {
   const { id, itemId } = req.params; //id = list_id, itemId = the specific item
   const { description, is_done, title } = req.body;
   const userId = req.userId;
-  console.log(`list id: ${id} \n item id: ${itemId}`);
+
+  // console.log(`list id: ${id} \n item id: ${itemId}`);
+  if (!userId) {
+    return res.status(401).json({ error: "Unauthorized." });
+  }
   if (!userId) {
     return res.status(401).json({ error: "Unauthorized." });
   }
@@ -86,4 +90,34 @@ exports.updateItem = async (req, res, next) => {
   }
 };
 
-exports.deleteItem = async (req, res, next) => {};
+exports.deleteItem = async (req, res, next) => {
+  const { id, itemId } = req.params; // id = list_id, itemId = the specific item
+  const userId = req.userId;
+
+  if (!userId) {
+    return res.status(401).json({ error: "Unauthorized." });
+  }
+
+  const access = await getAccessLevel(id, userId);
+
+  if (!access) {
+    return res.status(404).json({ error: "Couldn't find list" });
+  }
+  if (access === "viewer")
+    return res.status(403).json({ error: "Read-only access" });
+
+  try {
+    const result = await pool.query(
+      "DELETE FROM todo_items WHERE id = $1 AND list_id = $2 RETURNING id",
+      [itemId, id],
+    );
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: "Item not found." });
+    }
+
+    res.status(204).send();
+  } catch (error) {
+    next(error);
+  }
+};
