@@ -1,4 +1,3 @@
-// app.js
 const express = require("express");
 const cors = require("cors");
 require("dotenv").config();
@@ -18,7 +17,10 @@ app.use("/api/items", itemRoutes);
 
 app.use((err, req, res, next) => {
   console.error(err);
-  res.status(500).json({ error: "Something went wrong" });
+  const isDev = process.env.NODE_ENV !== "production";
+  res.status(500).json({
+    error: isDev ? err.message : "Something went wrong",
+  });
 });
 
 module.exports = app;
