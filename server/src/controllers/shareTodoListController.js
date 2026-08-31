@@ -1,3 +1,4 @@
+const { transporter } = require("../config/transporter.js");
 const pool = require("../db.js");
 const { getAccessLevel } = require("./todoListController.js");
 
@@ -52,7 +53,36 @@ exports.shareList = async (req, res, next) => {
       [id, invitedUserId, normalizedEmail, role || "editor", status],
     );
 
-    // TODO: send invite email here (e.g. via nodemailer / a mail service)
+    //Debug nodemailer config:
+    // try {
+    //   await transporter.verify();
+    //   console.log("Server is ready to take our messages");
+    // } catch (err) {
+    //   console.error("Verification failed:", err);
+    // }
+
+    const getSendersDetails = await pool.query(
+      "SELECT * FROM users WHERE id = $1 ",
+      [userId],
+    );
+
+    // console.log(`Owners email: ${getSendersDetails.rows[0].email}`);
+
+    const ownerMail = getSendersDetails.rows[0].email;
+    try {
+      // console.log(`Users email ${normalizedEmail}`);
+      const info = await transporter.sendMail({
+        from: `"DO IT!" ${ownerMail}`, // sender address
+        to: `${normalizedEmail}`, // list of recipients
+        subject: `You have been invited by ${ownerMail} to DO_IT tasks`, // subject line
+        // text: "Hello world?", // plain text body
+        html: "<h1>Follow the link to create or signin to your account</h1>", // HTML body
+      });
+
+      // console.log("Message sent: %s", info.messageId);
+    } catch (err) {
+      console.error("Error while sending mail:", err);
+    }
 
     res.status(201).json(result.rows[0]);
   } catch (error) {
