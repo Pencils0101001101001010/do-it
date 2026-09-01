@@ -6,7 +6,7 @@ export default function RequireAuth({ children }: { children: ReactNode }) {
   const { user, loading } = useAuth();
 
   if (loading) return <p>Loading...</p>;
-  if (!user) return <Navigate to="/login" replace />;
+  if (!user) return <Navigate to="/login" />;
 
   return <>{children}</>;
 }
