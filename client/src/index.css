@@ -2,11 +2,11 @@
   --text: #6b6375;
   --text-h: #08060d;
   --bg: #fff;
-  --border: #e5e4e7;
+  --border: #11f4f48c;
   --code-bg: #f4f3ec;
-  --accent: #aa3bff;
-  --accent-bg: rgba(170, 59, 255, 0.1);
-  --accent-border: rgba(170, 59, 255, 0.5);
+  --accent: #3b52ff;
+  --accent-bg: rgba(4, 33, 62, 0.766);
+  --accent-border: rgba(59, 226, 255, 0.5);
   --social-bg: rgba(244, 243, 236, 0.5);
   --shadow:
     rgba(0, 0, 0, 0.1) 0 10px 15px -3px, rgba(0, 0, 0, 0.05) 0 4px 6px -2px;
@@ -14,6 +14,8 @@
   --sans: system-ui, "Segoe UI", Roboto, sans-serif;
   --heading: system-ui, "Segoe UI", Roboto, sans-serif;
   --mono: ui-monospace, Consolas, monospace;
+
+  --btn-transition: ease-in 0.3s;
 
   font: 18px/145% var(--sans);
   letter-spacing: 0.18px;
@@ -34,11 +36,11 @@
   :root {
     --text: #9ca3af;
     --text-h: #f3f4f6;
-    --bg: #16171d;
+    --bg: #14266c;
     --border: #2e303a;
-    --code-bg: #1f2028;
-    --accent: #c084fc;
-    --accent-bg: rgba(192, 132, 252, 0.15);
+    --code-bg: #0521f0;
+    --accent: #8492fc;
+    --accent-bg: rgba(2, 15, 60, 0.463);
     --accent-border: rgba(192, 132, 252, 0.5);
     --social-bg: rgba(47, 48, 58, 0.5);
     --shadow:
@@ -67,6 +69,7 @@ h2 {
   font-family: var(--heading);
   font-weight: 500;
   color: var(--text-h);
+  margin: 0;
 }
 
 h4 {
@@ -88,9 +91,9 @@ h2 {
   font-size: 24px;
   line-height: 118%;
   letter-spacing: -0.24px;
-  margin: 0 0 8px;
+  margin: 0;
   @media (max-width: 1024px) {
-    font-size: 20px;
+    font-size: 30px;
   }
 }
 p {
@@ -105,6 +108,29 @@ p {
   height: 80vh;
 }
 
+nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem;
+  background-color: var(--accent-bg);
+}
+
+nav > button {
+  border: var(--border) solid 1px;
+  background-color: var(--accent-bg);
+  padding: 0.5rem;
+}
+
+nav > button:hover {
+  background-color: var(--accent);
+  transition: var(--btn-transition);
+}
+
+nav > h2 {
+  font-weight: 700;
+}
+
 .form-style > input {
   padding: 5px;
   margin-bottom: 1rem;
@@ -117,6 +143,7 @@ p {
   background-color: var(--accent-bg);
   border: var(--accent-border) solid 1px;
   margin: 1rem;
+  transition: var(--btn-transition);
 }
 
 .form-style > button:hover {
