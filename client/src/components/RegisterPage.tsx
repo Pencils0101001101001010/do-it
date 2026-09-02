@@ -17,7 +17,6 @@ export default function RegisterPage() {
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
@@ -46,7 +45,6 @@ export default function RegisterPage() {
     }
   };
 
-  //setFormData(((prev) => ({...prev, name: e.target.value})))} this makes sure that the user object updates only the field being typed in.
   return (
     <form onSubmit={handleSubmit} className="form-style">
       <h2>Register</h2>
