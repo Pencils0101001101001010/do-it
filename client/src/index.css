@@ -10,7 +10,9 @@
   --social-bg: rgba(244, 243, 236, 0.5);
   --shadow:
     rgba(0, 0, 0, 0.1) 0 10px 15px -3px, rgba(0, 0, 0, 0.05) 0 4px 6px -2px;
-
+  --curved-border-radius: 0% 100% 0% 100% / 64% 42% 58% 36%;
+  --curved-box-shadow: 25px 20px 1px 10px rgba(6, 6, 6, 0.356);
+  --curved-box-border: var(--accent-border) solid 3px;
   --sans: system-ui, "Segoe UI", Roboto, sans-serif;
   --heading: system-ui, "Segoe UI", Roboto, sans-serif;
   --mono: ui-monospace, Consolas, monospace;
@@ -129,14 +131,11 @@ nav h2 {
   justify-content: center;
   align-items: center;
   height: 80vh;
-  border-radius: 0% 100% 0% 100% / 64% 42% 58% 36%;
-  border-top: var(--accent-border) solid 3px;
-  border-left: var(--accent-border) solid 3px;
-
+  border-radius: var(--curved-border-radius);
+  border-top: var(--curved-box-border);
+  border-left: var(--curved-box-border);
+  box-shadow: var(--curved-box-shadow);
   margin: 4rem;
-  /* background-color: var(--accent-bg); */
-
-  box-shadow: 25px 20px 1px 10px rgba(6, 6, 6, 0.356);
   @media (max-width: 1024px) {
     height: 90vh;
     margin: 1rem;
