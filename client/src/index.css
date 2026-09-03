@@ -129,6 +129,9 @@ nav h2 {
   justify-content: center;
   align-items: center;
   height: 80vh;
+  border-radius: 0% 100% 0% 100% / 64% 42% 58% 36%;
+  border: var(--accent-border) solid 1px;
+  margin: 4rem;
 }
 
 .form-style h2 {
