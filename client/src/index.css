@@ -100,14 +100,6 @@ p {
   margin: 0;
 }
 
-.form-style {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  height: 80vh;
-}
-
 nav {
   display: flex;
   justify-content: space-between;
@@ -116,29 +108,41 @@ nav {
   background-color: var(--accent-bg);
 }
 
-nav > button {
+nav button {
   border: var(--border) solid 1px;
   background-color: var(--accent-bg);
   padding: 0.5rem;
 }
 
-nav > button:hover {
+nav button:hover {
   background-color: var(--accent);
   transition: var(--btn-transition);
 }
 
-nav > h2 {
+nav h2 {
   font-weight: 700;
 }
 
-.form-style > input {
+.form-style {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 80vh;
+}
+
+.form-style h2 {
+  margin-bottom: 1rem;
+}
+
+.form-style input {
   padding: 5px;
   margin-bottom: 1rem;
   border: var(--accent-border) solid 1px;
   background-color: var(--accent-bg);
 }
 
-.form-style > button {
+.form-style button {
   padding: 5px;
   background-color: var(--accent-bg);
   border: var(--accent-border) solid 1px;
@@ -146,6 +150,6 @@ nav > h2 {
   transition: var(--btn-transition);
 }
 
-.form-style > button:hover {
+.form-style button:hover {
   background-color: var(--accent);
 }
