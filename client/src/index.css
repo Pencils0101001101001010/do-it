@@ -130,8 +130,17 @@ nav h2 {
   align-items: center;
   height: 80vh;
   border-radius: 0% 100% 0% 100% / 64% 42% 58% 36%;
-  border: var(--accent-border) solid 1px;
+  border-top: var(--accent-border) solid 3px;
+  border-left: var(--accent-border) solid 3px;
+
   margin: 4rem;
+  /* background-color: var(--accent-bg); */
+
+  box-shadow: 25px 20px 1px 10px rgba(6, 6, 6, 0.356);
+  @media (max-width: 1024px) {
+    height: 90vh;
+    margin: 1rem;
+  }
 }
 
 .form-style h2 {
