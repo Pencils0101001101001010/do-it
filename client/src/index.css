@@ -109,7 +109,7 @@ p {
 nav {
   display: flex;
   justify-content: space-between;
-  align-items: center;
+
   padding: 0.5rem;
   background-color: var(--accent-bg);
 }
@@ -117,7 +117,8 @@ nav {
 nav button {
   border: var(--border) solid 1px;
   background-color: var(--accent-bg);
-  padding: 0.5rem;
+
+  padding: 0.2rem;
 }
 
 nav button:hover {
@@ -126,7 +127,8 @@ nav button:hover {
 }
 
 nav h2 {
-  font-weight: 700;
+  font-weight: 200;
+  margin: 0;
 }
 
 .form-style {
@@ -170,4 +172,8 @@ nav h2 {
 
 .form-style button:hover {
   background-color: var(--accent);
+}
+
+.sidebar-background {
+  background-color: var(--accent-bg);
 }
