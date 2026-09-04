@@ -18,7 +18,7 @@ exports.getLists = async (req, res, next) => {
        SELECT tl.*, s.role
        FROM todo_list tl
        JOIN todo_list_shares s ON s.list_id = tl.id
-       WHERE s.user_id = $1 AND s.status = 'accepted'`,
+       WHERE s.user_id = $1 AND s.status = 'accepted' ORDER BY created_at DESC`,
       [userId],
     );
 
@@ -37,7 +37,7 @@ exports.createList = async (req, res, next) => {
   }
   try {
     const result = await pool.query(
-      "INSERT INTO todo_list (user_id, name) VALUES ($1, $2) RETURNING *",
+      "INSERT INTO todo_list (user_id, name) VALUES ($1, $2) RETURNING * ",
       [userId, name || "New Todo"],
     );
 

@@ -40,7 +40,7 @@ export default function ContentSidebar({
               name="name"
               value={listName}
               onChange={(e) => setListName(e.target.value)}
-              className="w-45 border border-gray-100"
+              className="w-45 border border-gray-100   "
             />{" "}
           </form>
         </li>
@@ -56,18 +56,18 @@ export default function ContentSidebar({
                 <p>→</p>
                 <span className="is-drawer-close:hidden">{l.name}</span>
               </button>{" "}
-              <button
-                onClick={() => onDelete(l.id)}
+              <span
                 aria-hidden={!isActive}
                 tabIndex={isActive ? 0 : -1}
                 className={`transition-all ease-out duration-150 ${
                   isActive
-                    ? "opacity-100 scale-100 pointer-events-auto"
+                    ? "flex justify-between opacity-100 scale-100 pointer-events-auto"
                     : "opacity-0 scale-95 pointer-events-none w-0 h-0 overflow-hidden"
                 }`}
               >
-                Del
-              </button>
+                <button onClick={() => onDelete(l.id)}>Del</button>
+                <button>add</button>
+              </span>
             </li>
           );
         })}

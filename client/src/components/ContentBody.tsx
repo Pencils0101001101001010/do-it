@@ -9,8 +9,8 @@ import type { AxiosError } from "axios";
 export default function ContentBody() {
   const [getLists, setGetLists] = useState<List[]>([]);
   const [activeListId, setActiveListId] = useState<string | null>(null);
-  // const activeList = getLists.find((l) => l.id === activeListId);
-  console.log(`From content body ${activeListId}`);
+  const activeList = getLists.find((l) => l.id === activeListId);
+  // console.log(`From content body ${activeListId}`);
   useEffect(() => {
     api.get<List[]>("/list/todos").then((res) => {
       setGetLists(res.data);
@@ -59,7 +59,7 @@ export default function ContentBody() {
         className="drawer-toggle inline"
       />
       <div className="drawer-content">
-        <Content />
+        <Content listId={activeList?.id} />
       </div>
 
       <div className="drawer-side is-drawer-close:overflow-visible sidebar-background">
@@ -68,7 +68,7 @@ export default function ContentBody() {
           aria-label="close sidebar"
           className="drawer-overlay"
         ></label>
-        <div className="flex min-h-full flex-col items-start   is-drawer-close:w-14 is-drawer-open:w-64 ">
+        <div className="flex min-h-full flex-col items-start   is-drawer-close:w-14 is-drawer-open:w-64  bg-[#020f3c76]">
           {/* Sidebar content here */}
           <ContentSidebar
             lists={getLists}
