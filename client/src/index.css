@@ -177,3 +177,7 @@ nav h2 {
 .sidebar-background {
   background-color: var(--accent-bg);
 }
+
+.active {
+  background: var(--accent-bg);
+}

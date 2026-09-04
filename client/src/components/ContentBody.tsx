@@ -8,23 +8,47 @@ import type { AxiosError } from "axios";
 
 export default function ContentBody() {
   const [getLists, setGetLists] = useState<List[]>([]);
-
+  const [activeListId, setActiveListId] = useState<string | null>(null);
+  // const activeList = getLists.find((l) => l.id === activeListId);
+  console.log(`From content body ${activeListId}`);
   useEffect(() => {
     api.get<List[]>("/list/todos").then((res) => {
       setGetLists(res.data);
-      if (res.data.length > 0) return <p>No list</p>;
+      if (res.data.length > 0) setActiveListId(res.data[0].id);
     });
   }, []);
 
   const handleCreateList = async (name: string) => {
     if (!name) return;
-    await toast.promise(api.post("/list/new", { name: name }), {
+    const res = await toast.promise(api.post("/list/new", { name: name }), {
       loading: "Creating...",
       success: "Done!",
       error: (err: unknown) => {
         const axiosErr = err as AxiosError<{ error: string }>;
         return axiosErr.response?.data?.error || "Failed to create";
       },
+    });
+    setGetLists((prev) => [...prev, res.data]);
+    setActiveListId(res.data.id);
+  };
+
+  const handleDelete = async (id: string) => {
+    await toast.promise(api.delete(`/list/delete/${id}`), {
+      loading: "Deleting.",
+      success: "Deleted.",
+      error: (err: unknown) => {
+        const axiosErr = err as AxiosError<{ error: string }>;
+        return axiosErr.response?.data?.error || "Failed to delete";
+      },
+    });
+
+    setGetLists((prev) => {
+      const update = prev.filter((l) => l.id !== id);
+      if (activeListId === id) {
+        setActiveListId(update.length > 0 ? update[0].id : null);
+      }
+
+      return update;
     });
   };
   return (
@@ -44,9 +68,15 @@ export default function ContentBody() {
           aria-label="close sidebar"
           className="drawer-overlay"
         ></label>
-        <div className="flex min-h-full flex-col items-start   is-drawer-close:w-14 is-drawer-open:w-64">
+        <div className="flex min-h-full flex-col items-start   is-drawer-close:w-14 is-drawer-open:w-64 ">
           {/* Sidebar content here */}
-          <ContentSidebar lists={getLists} onCreate={handleCreateList} />
+          <ContentSidebar
+            lists={getLists}
+            onCreate={handleCreateList}
+            activeListId={activeListId}
+            onSelect={setActiveListId}
+            onDelete={handleDelete}
+          />
         </div>
       </div>
     </div>

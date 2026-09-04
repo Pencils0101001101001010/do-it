@@ -4,10 +4,19 @@ import type { List } from "../types";
 
 interface props {
   lists: List[];
+  activeListId: string | null;
   onCreate: (name: string) => void;
+  onSelect: (id: string) => void;
+  onDelete: (id: string) => void;
 }
 
-export default function ContentSidebar({ lists, onCreate }: props) {
+export default function ContentSidebar({
+  lists,
+  onCreate,
+  activeListId,
+  onSelect,
+  onDelete,
+}: props) {
   const [listName, setListName] = useState("");
 
   const handleCreate = (e: SubmitEvent<HTMLFormElement>) => {
@@ -21,7 +30,7 @@ export default function ContentSidebar({ lists, onCreate }: props) {
 
   return (
     <>
-      <ul className="menu w-full grow overflow-hidden">
+      <ul className="menu w-full grow overflow-hidden ">
         <li>
           <form onSubmit={handleCreate}>
             {" "}
@@ -35,29 +44,33 @@ export default function ContentSidebar({ lists, onCreate }: props) {
             />{" "}
           </form>
         </li>
-        {lists.map((l) => (
-          <li key={l.id}>
-            <button
-              className="is-drawer-close:tooltip is-drawer-close:tooltip-right "
-              data-tip="Homepage"
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 24 24"
-                strokeLinejoin="round"
-                strokeLinecap="round"
-                strokeWidth="2"
-                fill="none"
-                stroke="currentColor"
-                className="my-1.5 inline-block size-4"
+        {lists.map((l) => {
+          const isActive = l.id === activeListId;
+          return (
+            <li key={l.id} className={l.id === activeListId ? "active" : ""}>
+              <button
+                onClick={() => onSelect(l.id)}
+                className="is-drawer-close:tooltip is-drawer-close:tooltip-right "
+                data-tip="Homepage"
               >
-                <path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"></path>
-                <path d="M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
-              </svg>
-              <span className="is-drawer-close:hidden">{l.name}</span>
-            </button>
-          </li>
-        ))}
+                <p>→</p>
+                <span className="is-drawer-close:hidden">{l.name}</span>
+              </button>{" "}
+              <button
+                onClick={() => onDelete(l.id)}
+                aria-hidden={!isActive}
+                tabIndex={isActive ? 0 : -1}
+                className={`transition-all ease-out duration-150 ${
+                  isActive
+                    ? "opacity-100 scale-100 pointer-events-auto"
+                    : "opacity-0 scale-95 pointer-events-none w-0 h-0 overflow-hidden"
+                }`}
+              >
+                Del
+              </button>
+            </li>
+          );
+        })}
       </ul>
     </>
   );
