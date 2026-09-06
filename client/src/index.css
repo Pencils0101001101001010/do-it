@@ -181,3 +181,14 @@ nav h2 {
 .active {
   background: var(--accent-bg);
 }
+
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: auto;
+
+  @media (max-width: 1024px) {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto;
+  }
+}
