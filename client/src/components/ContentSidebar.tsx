@@ -66,7 +66,7 @@ export default function ContentSidebar({
                 }`}
               >
                 <button onClick={() => onDelete(l.id)}>Del</button>
-                <button>add</button>
+                <button>Share</button>
               </span>
             </li>
           );

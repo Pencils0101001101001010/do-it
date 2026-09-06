@@ -12,9 +12,12 @@ export default function Content({ listId }: { listId?: string }) {
   }, [listId]);
 
   return (
-    <div className="p-4">
+    <div className="p-4 grid grid-flow-col grid-cols-4 gap-4">
       {listItems.map((i) => (
-        <div key={i.id}>{i.title}</div>
+        <div className="" key={i.id}>
+          <h4>{i.title}</h4>
+          <p>{i.description}</p>
+        </div>
       ))}
     </div>
   );
