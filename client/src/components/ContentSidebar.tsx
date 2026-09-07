@@ -53,13 +53,17 @@ export default function ContentSidebar({
     //   `List Id: ${currentShareListId}\n User email ${shareEmail} \n User role: ${shareUserRole}`,
     // );
     try {
-      if (!shareEmail) {
-        toast.error("Please include a email to share to.");
+      if (
+        !shareEmail.trim().toLowerCase() ||
+        !shareEmail.includes("@") ||
+        !shareEmail.includes(".")
+      ) {
+        toast.error("Please include a valid email.");
         return;
       }
       await toast.promise(
         api.post(`/list/${currentShareListId}/share`, {
-          email: shareEmail,
+          email: shareEmail.trim().toLowerCase(),
           role: shareUserRole,
         }),
         {
