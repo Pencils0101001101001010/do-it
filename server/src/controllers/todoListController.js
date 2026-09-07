@@ -99,6 +99,19 @@ exports.deleteList = async (req, res, next) => {
   }
 
   try {
+    const access = await this.getAccessLevel(id, userId);
+
+    if (access === "editor" || access !== "owner")
+      return res
+        .status(403)
+        .json({ error: "Only owner can delete or share list" });
+
+    if (access === "viewer")
+      return res.status(403).json({ error: "Read-only access" });
+
+    if (!access) {
+      return res.status(404).json({ error: "Couldn't find list" });
+    }
     // Owner-only delete — sharing (even 'editor') does not grant delete rights
     const result = await pool.query(
       "DELETE FROM todo_list WHERE id = $1 AND user_id = $2 RETURNING *",

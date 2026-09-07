@@ -84,16 +84,18 @@ export default function ContentSidebar({
     <>
       <ul className="menu w-full grow overflow-hidden ">
         <li>
-          <form onSubmit={handleCreate}>
-            {" "}
-            <button type="submit">Add</button>
+          <form onSubmit={handleCreate} className="flex flex-col gap-y-3 ">
             <input
               type="text"
               name="name"
               value={listName}
+              placeholder="List name"
               onChange={(e) => setListName(e.target.value)}
-              className="w-45 border border-gray-100   "
-            />{" "}
+              className=" share-modal "
+            />
+            <button type="submit" className="share-modal-button">
+              Add
+            </button>
           </form>
         </li>
         {lists.map((l) => {
@@ -117,7 +119,7 @@ export default function ContentSidebar({
                     : "opacity-0 scale-95 pointer-events-none w-0 h-0 overflow-hidden"
                 }`}
               >
-                <button onClick={() => onDelete(l.id)}>Del</button>
+                <button onClick={() => onDelete(l.id)}>Delete</button>
                 <button onClick={() => handleShareModalOpen(l.id)}>
                   Share
                 </button>

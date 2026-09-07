@@ -100,11 +100,12 @@ exports.deleteItem = async (req, res, next) => {
 
   const access = await getAccessLevel(id, userId);
 
+  if (access === "viewer")
+    return res.status(403).json({ error: "Read-only access" });
+
   if (!access) {
     return res.status(404).json({ error: "Couldn't find list" });
   }
-  if (access === "viewer")
-    return res.status(403).json({ error: "Read-only access" });
 
   try {
     const result = await pool.query(

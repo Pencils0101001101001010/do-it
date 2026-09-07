@@ -68,7 +68,7 @@ export default function ContentBody() {
           aria-label="close sidebar"
           className="drawer-overlay"
         ></label>
-        <div className="flex min-h-full h-full flex-col items-start   is-drawer-close:w-14 is-drawer-open:w-64  bg-[#020f3c76]">
+        <div className="flex   flex-col items-start   is-drawer-close:w-14 is-drawer-open:w-64  bg-[#020f3c76]">
           {/* Sidebar content here */}
           <ContentSidebar
             lists={getLists}
