@@ -30,3 +30,10 @@ export interface ShareList {
   email: string;
   role: "editor" | "viewer";
 }
+
+export interface ShareUserList {
+  id: string;
+  invited_email: string;
+  role: string;
+  status: string;
+}

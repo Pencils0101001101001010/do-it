@@ -1,6 +1,6 @@
 import { useState, type SubmitEvent } from "react";
 
-import type { List } from "../types";
+import type { List, ShareUserList } from "../types";
 import toast from "react-hot-toast";
 import api from "../../api/client";
 import { AxiosError } from "axios";
@@ -25,6 +25,8 @@ export default function ContentSidebar({
   const [currentShareListId, setCurrentShareListId] = useState("");
   const [shareEmail, setShareEmail] = useState("");
   const [shareUserRole, setShareUserRole] = useState("viewer");
+  const [listSharedWith, setListSharedWith] = useState<ShareUserList[]>([]);
+  const isOwner = (list: List) => list.role === "owner";
 
   const handleCreate = (e: SubmitEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -35,9 +37,33 @@ export default function ContentSidebar({
     setListName("");
   };
 
-  const handleShareModalOpen = (listId: string) => {
+  const handleShareModalOpen = async (list: List) => {
     setOpenShareDropdown(true);
-    setCurrentShareListId(listId);
+    setCurrentShareListId(list.id);
+    setListSharedWith([]);
+
+    if (!isOwner(list)) return;
+    try {
+      const res = await toast.promise(
+        api.get(`/list/${list.id}/collaborators`),
+        {
+          loading: "Loading all users this list is shared with.",
+          success: "Done.",
+          error: (err: unknown) => {
+            const axiosErr = err as AxiosError<{ error: string }>;
+            return axiosErr.response?.data?.error || "failed to load users";
+          },
+        },
+      );
+      setListSharedWith(res.data);
+    } catch (error) {
+      const axiosErr = error as AxiosError;
+      if (axiosErr.response?.status === 403) {
+        setListSharedWith([]);
+      } else {
+        console.error(error);
+      }
+    }
   };
 
   const handleCloseShareModal = () => {
@@ -53,6 +79,16 @@ export default function ContentSidebar({
     //   `List Id: ${currentShareListId}\n User email ${shareEmail} \n User role: ${shareUserRole}`,
     // );
     try {
+      const alreadySharedWith = listSharedWith.find(
+        (u) => u.invited_email.toLowerCase() === shareEmail.toLowerCase(),
+      );
+
+      if (alreadySharedWith) {
+        toast.error("User has already been added.");
+
+        return;
+      }
+
       if (
         !shareEmail.trim().toLowerCase() ||
         !shareEmail.includes("@") ||
@@ -124,9 +160,7 @@ export default function ContentSidebar({
                 }`}
               >
                 <button onClick={() => onDelete(l.id)}>Delete</button>
-                <button onClick={() => handleShareModalOpen(l.id)}>
-                  Share
-                </button>
+                <button onClick={() => handleShareModalOpen(l)}>Share</button>
               </span>
               {openShareDropdown && currentShareListId === l.id ? (
                 <form
@@ -147,7 +181,7 @@ export default function ContentSidebar({
                       onChange={(e) => setShareEmail(e.target.value)}
                     />
                   </label>
-
+                  {/* {listSharedWith.invited_email} */}
                   <select
                     name="role"
                     value={shareUserRole}
@@ -157,6 +191,19 @@ export default function ContentSidebar({
                     <option value="viewer">Viewer</option>
                     <option value="editor">Editor</option>
                   </select>
+
+                  {isOwner(l) && (
+                    <>
+                      <p>Shared with:</p>{" "}
+                      {listSharedWith.map((u) => {
+                        return (
+                          <div key={u.id}>
+                            <p>{u.invited_email}</p>
+                          </div>
+                        );
+                      })}
+                    </>
+                  )}
 
                   <p className="flex justify-between w-full">
                     <button type="submit" className="share-modal-button">

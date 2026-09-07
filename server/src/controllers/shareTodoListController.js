@@ -82,7 +82,7 @@ exports.shareList = async (req, res, next) => {
         html: `<div><h1>Follow the link to create or signin to your account</h1> <p>The following is a TO_DO list shared by ${sendersName}. The following link will take you to DO_IT's landing login page, if you don't have a profile you can click register below the login form to register. once thats done sign in with the newly created details and your list will be waiting. (Always use a strong password with Uppercase, lowercase, numbers and special characters.)</p> <h2><a href="https://do-it-pink.vercel.app">Click here to see List</a></h2> </div>`, // HTML body
       });
 
-      console.log("Message sent: %s", info.messageId);
+      // console.log("Message sent: %s", info.messageId);
     } catch (err) {
       console.error("Error while sending mail:", err);
     }
@@ -102,8 +102,14 @@ exports.getListShares = async (req, res, next) => {
   }
 
   const access = await getAccessLevel(id, userId);
+
+  if (access === "editor" || access === "viewer")
+    return res.status(403).json({
+      error: "Only the list owner can see the users this list is shared with.",
+    });
+
   if (access !== "owner")
-    return res.status(404).json({ error: "Board not found." });
+    return res.status(404).json({ error: "List not found." });
 
   try {
     const list = await pool.query(
