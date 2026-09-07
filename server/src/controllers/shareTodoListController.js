@@ -79,7 +79,7 @@ exports.shareList = async (req, res, next) => {
         from: `"Check List!" ${ownerMail}`, // sender address
         to: `${normalizedEmail}`, // list of recipients
         subject: `${sendersName} has shared ${listName} on DO_IT.`, // subject line
-        html: `<div><h1>Follow the link to create or signin to your account</h1> <p>The following is a TO_DO list shared by ${sendersName}. The following link will take you to DO_IT's landing login page, if you don't have a profile you can click register below the login form to register. once thats done sign in with the newly created details and your list will be waiting. (Always use a strong password with Uppercase, lowercase, numbers and special characters.)</p> <h2><a href="https://do-it-pink.vercel.app">List</a></h2> </div>`, // HTML body
+        html: `<div><h1>Follow the link to create or signin to your account</h1> <p>The following is a TO_DO list shared by ${sendersName}. The following link will take you to DO_IT's landing login page, if you don't have a profile you can click register below the login form to register. once thats done sign in with the newly created details and your list will be waiting. (Always use a strong password with Uppercase, lowercase, numbers and special characters.)</p> <h2><a href="https://do-it-pink.vercel.app">Click here to see List</a></h2> </div>`, // HTML body
       });
 
       console.log("Message sent: %s", info.messageId);
