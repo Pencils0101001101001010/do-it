@@ -19,7 +19,7 @@ export interface ListItem {
   list_id: string;
   title: string;
   description: string;
-  is_done: string;
+  is_done: boolean;
   created_at: string;
 }
 
