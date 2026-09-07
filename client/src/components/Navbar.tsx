@@ -25,7 +25,10 @@ export default function Navbar() {
           <path d="M14 10l2 2l-2 2"></path>
         </svg>
       </label>
-      <h2>DO_IT</h2>
+      <div className="flex items-center ">
+        <img src="icon.png" alt="check logo" width={70} height={70} />
+        <h2>DO_IT</h2>
+      </div>
       <div>
         <button onClick={logout}>Logout</button>
       </div>
