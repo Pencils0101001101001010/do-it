@@ -24,7 +24,7 @@ exports.shareList = async (req, res, next) => {
   try {
     // Only the owner can share the list
     const list = await pool.query(
-      "SELECT id FROM todo_list WHERE id = $1 AND user_id = $2",
+      "SELECT id, name FROM todo_list WHERE id = $1 AND user_id = $2 ",
       [id, userId],
     );
 
@@ -68,18 +68,21 @@ exports.shareList = async (req, res, next) => {
 
     // console.log(`Owners email: ${getSendersDetails.rows[0].email}`);
 
+    // console.log(`Receivers name : ${getSendersDetails.rows[0].name}`);
     const ownerMail = getSendersDetails.rows[0].email;
+    const listName = list.rows[0].name;
+    const sendersName = getSendersDetails.rows[0].name;
+    // console.log(`List being shared ${list.rows[0].name}`);
     try {
       // console.log(`Users email ${normalizedEmail}`);
       const info = await transporter.sendMail({
-        from: `"DO IT!" ${ownerMail}`, // sender address
+        from: `"Check List!" ${ownerMail}`, // sender address
         to: `${normalizedEmail}`, // list of recipients
-        subject: `You have been invited by ${ownerMail} to DO_IT tasks`, // subject line
-        // text: "Hello world?", // plain text body
-        html: "<h1>Follow the link to create or signin to your account</h1>", // HTML body
+        subject: `${sendersName} has shared ${listName} on DO_IT.`, // subject line
+        html: `<div><h1>Follow the link to create or signin to your account</h1> <p>The following is a TO_DO list shared by ${sendersName}. The following link will take you to DO_IT's landing login page, if you don't have a profile you can click register below the login form to register. once thats done sign in with the newly created details and your list will be waiting. (Always use a strong password with Uppercase, lowercase, numbers and special characters.)</p> <h2><a href="https://do-it-pink.vercel.app">List</a></h2> </div>`, // HTML body
       });
 
-      // console.log("Message sent: %s", info.messageId);
+      console.log("Message sent: %s", info.messageId);
     } catch (err) {
       console.error("Error while sending mail:", err);
     }
