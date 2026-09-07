@@ -192,3 +192,22 @@ nav h2 {
     grid-template-rows: auto;
   }
 }
+
+.share-modal {
+  padding: 5px;
+  margin-bottom: 0.5rem;
+  border: var(--accent-border) solid 1px;
+  background-color: var(--accent-bg);
+}
+
+.share-modal-button {
+  padding: 5px;
+  background-color: var(--accent-bg);
+  border: var(--accent-border) solid 1px;
+  margin: 0.5rem;
+  transition: var(--btn-transition);
+}
+
+.share-modal-button:hover {
+  background-color: var(--accent);
+}
