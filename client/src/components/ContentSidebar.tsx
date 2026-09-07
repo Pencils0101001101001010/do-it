@@ -4,6 +4,7 @@ import type { List, ShareUserList } from "../types";
 import toast from "react-hot-toast";
 import api from "../../api/client";
 import { AxiosError } from "axios";
+import { useAuth } from "../../context/auth-context";
 
 interface props {
   lists: List[];
@@ -26,7 +27,12 @@ export default function ContentSidebar({
   const [shareEmail, setShareEmail] = useState("");
   const [shareUserRole, setShareUserRole] = useState("viewer");
   const [listSharedWith, setListSharedWith] = useState<ShareUserList[]>([]);
+
+  const isSharingWithSelf = () =>
+    currentUser?.email?.toLowerCase() === shareEmail.trim().toLowerCase();
+
   const isOwner = (list: List) => list.role === "owner";
+  const { user: currentUser } = useAuth();
 
   const handleCreate = (e: SubmitEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -75,13 +81,16 @@ export default function ContentSidebar({
 
   const handleShareSubmit = async (e: SubmitEvent<HTMLFormElement>) => {
     e.preventDefault();
-    // console.log(
-    //   `List Id: ${currentShareListId}\n User email ${shareEmail} \n User role: ${shareUserRole}`,
-    // );
+
     try {
       const alreadySharedWith = listSharedWith.find(
         (u) => u.invited_email.toLowerCase() === shareEmail.toLowerCase(),
       );
+
+      if (isSharingWithSelf()) {
+        toast.error("You can't share a list with yourself.");
+        return;
+      }
 
       if (alreadySharedWith) {
         toast.error("User has already been added.");
@@ -149,19 +158,38 @@ export default function ContentSidebar({
               >
                 <p>→</p>
                 <span className="is-drawer-close:hidden">{l.name}</span>
-              </button>{" "}
-              <span
-                aria-hidden={!isActive}
-                tabIndex={isActive ? 0 : -1}
-                className={`transition-all ease-out duration-150 ${
-                  isActive
-                    ? "flex justify-between opacity-100 scale-100 pointer-events-auto"
-                    : "opacity-0 scale-95 pointer-events-none w-0 h-0 overflow-hidden"
-                }`}
-              >
-                <button onClick={() => onDelete(l.id)}>Delete</button>
-                <button onClick={() => handleShareModalOpen(l)}>Share</button>
-              </span>
+                <>
+                  {isOwner(l) ? (
+                    <p className="badge badge-xs badge-outline badge-primary">
+                      Mine
+                    </p>
+                  ) : (
+                    <p className="badge badge-xs badge-outline badge-info">
+                      Other
+                    </p>
+                  )}
+                </>{" "}
+              </button>
+              {isOwner(l) && (
+                <span
+                  aria-hidden={!isActive}
+                  tabIndex={isActive ? 0 : -1}
+                  className={`transition-all ease-out duration-150 ${
+                    isActive
+                      ? "flex justify-between opacity-100 scale-100 pointer-events-auto"
+                      : "opacity-0 scale-95 pointer-events-none w-0 h-0 overflow-hidden"
+                  }`}
+                >
+                  {" "}
+                  <>
+                    <button onClick={() => onDelete(l.id)}>Delete</button>
+
+                    <button onClick={() => handleShareModalOpen(l)}>
+                      Share
+                    </button>
+                  </>
+                </span>
+              )}
               {openShareDropdown && currentShareListId === l.id ? (
                 <form
                   onSubmit={handleShareSubmit}

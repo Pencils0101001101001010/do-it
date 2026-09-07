@@ -41,7 +41,7 @@ exports.createList = async (req, res, next) => {
       [userId, name || "New Todo"],
     );
 
-    res.status(201).json(result.rows[0]);
+    res.status(201).json({ ...result.rows[0], role: "owner" });
   } catch (error) {
     next(error);
   }
