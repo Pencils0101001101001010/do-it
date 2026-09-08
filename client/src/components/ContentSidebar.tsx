@@ -129,6 +129,19 @@ export default function ContentSidebar({
       console.error(error);
     }
   };
+
+  const handleDeleteCollaborator = async (listId: string, userId: string) => {
+    await toast.promise(api.delete(`/list/${listId}/collaborators/${userId}`), {
+      loading: "Removing.",
+      success: "User removed.",
+      error: (err: unknown) => {
+        const axiosErr = err as AxiosError<{ error: string }>;
+        return axiosErr.response?.data?.error || "Failed to remove user";
+      },
+    });
+
+    setOpenShareDropdown(false);
+  };
   return (
     <>
       <ul className="menu w-full grow overflow-hidden ">
@@ -225,8 +238,19 @@ export default function ContentSidebar({
                       <p>Shared with:</p>{" "}
                       {listSharedWith.map((u) => {
                         return (
-                          <div key={u.id}>
+                          <div
+                            key={u.id}
+                            className="flex items-center justify-around w-full"
+                          >
                             <p>{u.invited_email}</p>
+                            <button
+                              onClick={() =>
+                                handleDeleteCollaborator(l.id, u.id)
+                              }
+                              type="button"
+                            >
+                              x
+                            </button>
                           </div>
                         );
                       })}
