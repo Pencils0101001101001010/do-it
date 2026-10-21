@@ -7,7 +7,7 @@ const resend = new Resend(apiKey);
 async function ShareListMailingService(recipientEmail, sendersName, listName) {
   try {
     const { data, error } = await resend.emails.send({
-      from: "To_List <notifications@update.gisteraand.co.za>", // sender address
+      from: "To_Do <notifications@update.gisteraand.co.za>", // sender address
       to: `${recipientEmail}`, // list of recipients
       subject: `${sendersName} has shared ${listName} on DO_IT.`, // subject line
       html: `<div style="font-family: Arial, Helvetica, sans-serif; max-width: 480px; margin: 0   auto; padding: 32px 24px; color: #1a1a1a;">
