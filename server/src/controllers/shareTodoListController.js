@@ -1,7 +1,6 @@
-const { transporter } = require("../config/transporter.js");
 const pool = require("../db.js");
 const { getAccessLevel } = require("./todoListController.js");
-
+const ShareListMailingService = require("../service/shareList.mail.service.js");
 exports.shareList = async (req, res, next) => {
   const userId = req.userId;
   const { id } = req.params; // list id
@@ -53,54 +52,25 @@ exports.shareList = async (req, res, next) => {
       [id, invitedUserId, normalizedEmail, role || "editor", status],
     );
 
-    //Debug nodemailer config:
-    // try {
-    //   await transporter.verify();
-    //   console.log("Server is ready to take our messages");
-    // } catch (err) {
-    //   console.error("Verification failed:", err);
-    // }
-
     const getSendersDetails = await pool.query(
       "SELECT * FROM users WHERE id = $1 ",
       [userId],
     );
 
-    // console.log(`Owners email: ${getSendersDetails.rows[0].email}`);
-
-    // console.log(`Receivers name : ${getSendersDetails.rows[0].name}`);
-    const ownerMail = getSendersDetails.rows[0].email;
     const listName = list.rows[0].name;
-    const sendersName = getSendersDetails.rows[0].name;
+    const sendersName = getSendersDetails.rows[0].username;
     // console.log(`List being shared ${list.rows[0].name}`);
-    try {
-      // console.log(`Users email ${normalizedEmail}`);
-      const info = await transporter.sendMail({
-        from: `"Check List!" ${ownerMail}`, // sender address
-        to: `${normalizedEmail}`, // list of recipients
-        subject: `${sendersName} has shared ${listName} on DO_IT.`, // subject line
-        html: `<div style="font-family: Arial, Helvetica, sans-serif; max-width: 480px; margin: 0   auto; padding: 32px 24px; color: #1a1a1a;">
-        <h1 style="font-size: 22px; margin: 0 0 16px;">You've got a shared to-do list</h1>
-        <p style="font-size: 15px; line-height: 1.6; margin: 0 0 16px;">
-        ${sendersName} just shared a to-do list with you on DO_IT. Sign in to your existing account, or create a free one in seconds, to see what's on it.
-        </p>
-        <p style="font-size: 15px; line-height: 1.6; margin: 0 0 24px;">
-        New here? Click the button below, then select <strong>Register</strong> underneath the login form. Once your account is set up, sign in and the list will be waiting for you.
-        </p>
-        <div style="text-align: center; margin: 0 0 24px;">
-        <a href="https://do-it-pink.vercel.app" style="display: inline-block; background-color: #2563eb; color: #ffffff; text-decoration: none; font-size: 15px; font-weight: bold; padding: 12px 28px; border-radius: 6px;">
-         View the list
-        </a>
-        </div>
-        <p style="font-size: 13px; color: #6b6b6b; line-height: 1.5; margin: 0;">
-        Tip: when creating your password, use a mix of uppercase, lowercase, numbers, and special characters to keep your account secure.
-        </p>
-        </div>`, // HTML body
-      });
 
-      // console.log("Message sent: %s", info.messageId);
-    } catch (err) {
-      console.error("Error while sending mail:", err);
+    const sentMail = await ShareListMailingService(
+      normalizedEmail,
+      sendersName,
+      listName,
+    );
+
+    if (!sentMail.success) {
+      return res.status(400).json({
+        error: `An error occurred well sending mail: ${sentMail.error}`,
+      });
     }
 
     res.status(201).json(result.rows[0]);
