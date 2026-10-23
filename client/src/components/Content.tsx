@@ -113,6 +113,9 @@ export default function Content({ listId }: { listId?: string }) {
   const handleDeleteItem = async (item: ListItem) => {
     if (!listId) return;
 
+    if (!window.confirm(`Delete "${item.title}"? This can't be undone.`))
+      return;
+
     const previousItems = itemsCache[listId] ?? [];
 
     // optimistic removal
